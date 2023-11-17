@@ -1,27 +1,27 @@
-from fastapi import FastAPI, HTTPException, BackgroundTasks
-from pydantic import BaseModel
-from datetime import datetime
-import json
+from fastapi import FastAPI, BackgroundTasks, Depends
+from sqlalchemy.orm import Session
+from log_ingestor_package import crud, models, schemas
+from log_ingestor_package.database import engine, SessionLocal 
 
 app = FastAPI()
 
-class LogData(BaseModel):
-    level: str
-    message: str
-    resourceId: str
-    timestamp: datetime
-    traceId: str
-    spanId: str
-    commit: str
-    metadata: dict
+# Create the database tables
+models.Base.metadata.create_all(bind=engine)
 
-def process_log(log: LogData):
-    # Simulate log processing
-    print(f"Processing log: {log.model_dump_json()}")
+# Dependency to get a database session
+def get_db():
+    db = SessionLocal()  
+    try:
+        yield db
+    finally:
+        db.close()
+
+def process_log(db: Session, log: schemas.LogData):
+    return crud.create_log_entry(db, log)
 
 @app.post("/ingest")
-async def ingest_log(log: LogData, background_tasks: BackgroundTasks):
-    background_tasks.add_task(process_log, log)
+async def ingest_log(log: schemas.LogData, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    background_tasks.add_task(process_log, db, log)
     return {"status": "Log ingestion initiated"}
 
 if __name__ == "__main__":
