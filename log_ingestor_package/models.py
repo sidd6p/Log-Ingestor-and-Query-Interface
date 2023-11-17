@@ -1,5 +1,6 @@
+# models.py
 from sqlalchemy import Column, Integer, String, DateTime, JSON
-from .database import Base
+from log_ingestor_package.database import Base
 
 class LogEntry(Base):
     __tablename__ = "logs"

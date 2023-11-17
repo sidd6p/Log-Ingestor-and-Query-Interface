@@ -1,12 +1,22 @@
+# schemas.py
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Dict
 
-class LogData(BaseModel):
+class LogEntryBase(BaseModel):
     level: str
     message: str
     resourceId: str
-    timestamp: datetime
     traceId: str
     spanId: str
     commit: str
-    log_metadata: dict  # Renamed from 'metadata' to 'log_metadata'
+    logs_metadata: Dict
+
+class LogEntryCreate(LogEntryBase):
+    pass
+
+class LogEntry(LogEntryBase):
+    timestamp: datetime
+
+    class Config:
+        orm_mode = True
