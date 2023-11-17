@@ -9,7 +9,7 @@ class LogEntryBase(BaseModel):
     traceId: str
     spanId: str
     commit: str
-    log_metadata: Dict
+    # log_metadata: Dict
 
 class LogEntryCreate(LogEntryBase):
     pass

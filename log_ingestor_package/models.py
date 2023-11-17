@@ -12,4 +12,4 @@ class LogEntry(Base):
     traceId = Column(String)
     spanId = Column(String)
     commit = Column(String)
-    log_metadata = Column(JSON)  # Renamed from 'metadata' to 'log_metadata'
+    # log_metadata = Column(JSON)  # Renamed from 'metadata' to 'log_metadata'

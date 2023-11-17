@@ -12,7 +12,7 @@ def create_log(db: Session, log: schemas.LogEntry):
         traceId=log.traceId,
         spanId=log.spanId,
         commit=log.commit,
-        log_metadata=log.log_metadata # Updated to 'log_metadata'
+        # log_metadata=log.log_metadata # Updated to 'log_metadata'
         
     )
     db.add(db_log)
