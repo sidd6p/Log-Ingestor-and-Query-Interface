@@ -1,7 +1,6 @@
 # rabbitmq_producer.py
 import pika
 import json
-from log_ingestor_package import config
 
 class RabbitMQProducer:
     def __init__(self):

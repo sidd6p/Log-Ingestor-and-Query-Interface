@@ -1,6 +1,5 @@
 # schemas.py
 from pydantic import BaseModel
-from datetime import datetime
 from typing import Dict
 
 class LogEntryBase(BaseModel):
@@ -10,13 +9,13 @@ class LogEntryBase(BaseModel):
     traceId: str
     spanId: str
     commit: str
-    logs_metadata: Dict
+    log_metadata: Dict
 
 class LogEntryCreate(LogEntryBase):
     pass
 
 class LogEntry(LogEntryBase):
-    timestamp: datetime
+    timestamp: str  
 
     class Config:
         orm_mode = True

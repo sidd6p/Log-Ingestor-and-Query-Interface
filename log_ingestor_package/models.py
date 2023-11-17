@@ -1,5 +1,5 @@
 # models.py
-from sqlalchemy import Column, Integer, String, DateTime, JSON
+from sqlalchemy import Column, Integer, String, JSON
 from log_ingestor_package.database import Base
 
 class LogEntry(Base):
@@ -8,7 +8,7 @@ class LogEntry(Base):
     level = Column(String)
     message = Column(String)
     resourceId = Column(String)
-    timestamp = Column(DateTime)
+    timestamp = Column(String)
     traceId = Column(String)
     spanId = Column(String)
     commit = Column(String)

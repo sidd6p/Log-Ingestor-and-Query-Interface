@@ -1,4 +1,5 @@
 # crud.py
+import json
 from sqlalchemy.orm import Session
 from log_ingestor_package import models, schemas
 
@@ -7,11 +8,11 @@ def create_log(db: Session, log: schemas.LogEntry):
         level=log.level,
         message=log.message,
         resourceId=log.resourceId,
-        timestamp=log.timestamp,
+        timestamp=str(log.timestamp),
         traceId=log.traceId,
         spanId=log.spanId,
         commit=log.commit,
-        log_metadata=json.dumps(log.log_metadata)  # Updated to 'log_metadata'
+        log_metadata=log.log_metadata # Updated to 'log_metadata'
         
     )
     db.add(db_log)

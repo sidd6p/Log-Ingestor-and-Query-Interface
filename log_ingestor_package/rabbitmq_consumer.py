@@ -1,7 +1,7 @@
 # rabbitmq_consumer.py
 import pika
 import json
-from log_ingestor_package import config, crud, database
+from log_ingestor_package import crud, database
 from log_ingestor_package.schemas import LogEntryCreate
 
 
