@@ -26,22 +26,24 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/ingest", response_model=LogEntry)
-async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db)):
-    # Publish log to RabbitMQ
-    producer.publish_log(log)
-
-    # # Store log in the database
-    # return crud.create_log(db, log)
-
-@app.get("/logs", response_model=List[LogEntry])
-async def get_logs(skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)):
-    return crud.get_logs(db, skip=skip, limit=limit)
 
 # Testing endpoint to check if the server is running
 @app.get("/health")
 async def health_check():
     return {"status": "running"}
+
+
+@app.post("/ingest")
+async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db)):
+    # Publish log to RabbitMQ
+    producer.publish_log(log)
+
+    return {"status": "inserted"}
+
+@app.get("/logs", response_model=List[LogEntry])
+async def get_logs(skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)):
+    return crud.get_logs(db, skip=skip, limit=limit)
+
 
 if __name__ == "__main__":
     import uvicorn

@@ -10,10 +10,6 @@ class LogEntryBase(BaseModel):
     spanId: str
     commit: str
     # log_metadata: Dict
-
-class LogEntryCreate(LogEntryBase):
-    pass
-
 class LogEntry(LogEntryBase):
     timestamp: str  
 
