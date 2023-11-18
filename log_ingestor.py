@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from log_ingestor_package import crud, database, rabbitmq_producer
+from log_ingestor_package import crud, database, rabbitmq_producer, models
 from log_ingestor_package.schemas import LogEntry
 
 app = FastAPI()
@@ -18,6 +18,7 @@ app.add_middleware(
 
 producer = rabbitmq_producer.RabbitMQProducer()
 
+
 # Create a dependency to get the database session
 def get_db():
     db = database.SessionLocal()
@@ -25,6 +26,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# Create Elasticsearch index if not exists
+models.create_elasticsearch_index()
 
 
 # Testing endpoint to check if the server is running
@@ -37,15 +42,25 @@ async def health_check():
 async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db)):
     # Publish log to RabbitMQ
     # producer.publish_log(log)
-    crud.create_log(db, log)
+
+    # Save log entry to PostgreSQL
+    db_log_entry = crud.create_log(db, log)
+
+    # Index the same log entry in Elasticsearch
+    models.index_log_entry(db_log_entry)
+
     return {"status": "inserted"}
 
+
 @app.get("/logs", response_model=List[LogEntry])
-async def get_logs(skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)):
+async def get_logs(
+    skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)
+):
     return crud.get_logs(db, skip=skip, limit=limit)
 
 
 if __name__ == "__main__":
     import uvicorn
+
     database.Base.metadata.create_all(bind=database.engine)
     uvicorn.run(app, host="0.0.0.0", port=3000)

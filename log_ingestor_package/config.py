@@ -1,9 +1,12 @@
-# config.py
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env file
 
 class Settings(BaseSettings):
-    # DATABASE_URL: str = r"sqlite:///./test.db"
-    DATABASE_URL: str = r"postgresql://postgres:sidd@localhost:5432/log_ingestor_package_db"
-    RABBITMQ_URL: str = r"amqp://guest:guest@localhost:5672"
+    DATABASE_URL: str = os.getenv('DATABASE_URL', 'default_postgres_url')
+    ELASTICSEARCH_URL: str = os.getenv('ELASTICSEARCH_URL', 'default_elasticsearch_url')
+    RABBITMQ_URL: str = os.getenv('RABBITMQ_URL', 'default_rabbitmq_url')
 
 settings = Settings()

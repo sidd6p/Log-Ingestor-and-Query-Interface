@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from typing import Dict
 
+
 class LogEntryBase(BaseModel):
     level: str
     message: str
@@ -10,8 +11,10 @@ class LogEntryBase(BaseModel):
     spanId: str
     commit: str
     # log_metadata: Dict
+
+
 class LogEntry(LogEntryBase):
-    timestamp: str  
+    timestamp: str
 
     class Config:
         orm_mode = True
