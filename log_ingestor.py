@@ -36,8 +36,8 @@ async def health_check():
 @app.post("/ingest")
 async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db)):
     # Publish log to RabbitMQ
-    producer.publish_log(log)
-
+    # producer.publish_log(log)
+    crud.create_log(db, log)
     return {"status": "inserted"}
 
 @app.get("/logs", response_model=List[LogEntry])
