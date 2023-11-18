@@ -9,6 +9,8 @@ from elasticsearch import Elasticsearch
 
 app = FastAPI()
 
+database.Base.metadata.create_all(bind=database.engine)
+
 # CORS Configuration (if needed)
 origins = ["*"]
 app.add_middleware(
@@ -45,12 +47,12 @@ async def health_check():
 @app.post("/ingest")
 async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db)):
     # Publish log to RabbitMQ
-    # producer.publish_log(log)
+    producer.publish_log(log)
 
     # Save log entry to PostgreSQL
-    db_log_entry = crud.create_log(db, log)
+    # db_log_entry = crud.create_log(db, log)
 
-    return db_log_entry
+    return {"status":"Log inserted successfully"}
 
 
 @app.get("/logs", response_model=List[LogEntry])
@@ -60,7 +62,7 @@ async def get_logs(
     return crud.get_logs(db, skip=skip, limit=limit)
 
 
-@app.post("/search")
+@app.get("/search")
 async def search_logs(request: Request):
     body = await request.json()
     query_text = body.get("query")
@@ -72,10 +74,3 @@ async def search_logs(request: Request):
     response = es_client.search(index="log_entries", body={"query": es_query})
 
     return response["hits"]["hits"]
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    database.Base.metadata.create_all(bind=database.engine)
-    uvicorn.run(app, host="0.0.0.0", port=3000)
