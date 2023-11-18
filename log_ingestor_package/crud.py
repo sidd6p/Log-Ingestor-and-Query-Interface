@@ -5,6 +5,7 @@ from log_ingestor_package import models, schemas
 
 
 def create_log(db: Session, log: schemas.LogEntry):
+    # Create and add log entry to PostgreSQL
     db_log = models.LogEntry(
         level=log.level,
         message=log.message,
@@ -13,12 +14,16 @@ def create_log(db: Session, log: schemas.LogEntry):
         traceId=log.traceId,
         spanId=log.spanId,
         commit=log.commit,
-        # log_metadata=log.log_metadata # Updated to 'log_metadata'
+        # ... other fields ...
     )
     db.add(db_log)
     db.commit()
-    db.refresh(db_log)
+
+    # Index the same log entry in Elasticsearch
+    models.index_log_entry(db_log)
+
     return db_log
+
 
 
 def get_logs(db: Session, skip: int = 0, limit: int = 10):

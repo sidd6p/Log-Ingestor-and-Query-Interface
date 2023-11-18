@@ -17,19 +17,18 @@ class LogEntry(Base):
 
 
 def create_elasticsearch_index():
-    # Define Elasticsearch index mapping
+    # Define the Elasticsearch index mapping
     mapping = {
         "mappings": {
             "properties": {
                 "level": {"type": "keyword"},
                 "message": {"type": "text"},
                 "resourceId": {"type": "keyword"},
-                # Add other fields here...
+                # ... other fields ...
             }
         }
     }
     es_client.indices.create(index="log_entries", body=mapping, ignore=400)
-
 
 def index_log_entry(log_entry):
     # Index a log entry in Elasticsearch
@@ -37,6 +36,6 @@ def index_log_entry(log_entry):
         "level": log_entry.level,
         "message": log_entry.message,
         "resourceId": log_entry.resourceId,
-        # Add other fields here...
+        # ... other fields ...
     }
     es_client.index(index="log_entries", document=doc)
