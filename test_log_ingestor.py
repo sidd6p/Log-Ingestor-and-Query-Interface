@@ -17,4 +17,4 @@ async def test_ingest_log():
             "metadata": {"parentResourceId": "server-0987"}
         })
         assert response.status_code == 200
-        assert response.json() == {"status": "Log ingestion initiated"}
+        assert response.json() == {"status": "inserted"}
