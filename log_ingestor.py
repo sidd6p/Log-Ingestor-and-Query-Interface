@@ -1,10 +1,8 @@
-# log_ingestor.py
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from log_ingestor_package import crud, database, rabbitmq_producer
 from log_ingestor_package.schemas import LogEntry
-
 
 app = FastAPI()
 
@@ -19,6 +17,7 @@ app.add_middleware(
 )
 
 producer = rabbitmq_producer.RabbitMQProducer()
+
 # Create a dependency to get the database session
 def get_db():
     db = database.SessionLocal()
@@ -32,12 +31,17 @@ async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db))
     # Publish log to RabbitMQ
     producer.publish_log(log)
 
-    # Store log in the database
-    return crud.create_log(db, log)
+    # # Store log in the database
+    # return crud.create_log(db, log)
 
 @app.get("/logs", response_model=List[LogEntry])
-async def get_logs(skip: int = 0, limit: int = 10, db: database.SessionLocal = Depends(get_db)):
+async def get_logs(skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)):
     return crud.get_logs(db, skip=skip, limit=limit)
+
+# Testing endpoint to check if the server is running
+@app.get("/health")
+async def health_check():
+    return {"status": "running"}
 
 if __name__ == "__main__":
     import uvicorn
