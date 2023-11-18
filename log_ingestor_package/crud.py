@@ -25,6 +25,5 @@ def create_log(db: Session, log: schemas.LogEntry):
     return db_log
 
 
-
 def get_logs(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.LogEntry).offset(skip).limit(limit).all()

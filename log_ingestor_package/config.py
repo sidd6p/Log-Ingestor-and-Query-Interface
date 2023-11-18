@@ -4,9 +4,11 @@ import os
 
 load_dotenv()  # Load environment variables from .env file
 
+
 class Settings(BaseSettings):
-    DATABASE_URL: str = os.getenv('DATABASE_URL', 'default_postgres_url')
-    ELASTICSEARCH_URL: str = os.getenv('ELASTICSEARCH_URL', 'default_elasticsearch_url')
-    RABBITMQ_URL: str = os.getenv('RABBITMQ_URL', 'default_rabbitmq_url')
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "default_postgres_url")
+    ELASTICSEARCH_URL: str = os.getenv("ELASTICSEARCH_URL", "default_elasticsearch_url")
+    RABBITMQ_URL: str = os.getenv("RABBITMQ_URL", "default_rabbitmq_url")
+
 
 settings = Settings()

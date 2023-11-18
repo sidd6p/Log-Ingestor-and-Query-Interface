@@ -30,6 +30,7 @@ def create_elasticsearch_index():
     }
     es_client.indices.create(index="log_entries", body=mapping, ignore=400)
 
+
 def index_log_entry(log_entry):
     # Index a log entry in Elasticsearch
     doc = {

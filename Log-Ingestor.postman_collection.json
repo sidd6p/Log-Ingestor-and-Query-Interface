@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "d63671cc-0d77-4e1b-a5e8-e5941486e91d",
+		"name": "Log-Ingestor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25064118"
+	},
+	"item": [
+		{
+			"name": "ingestor",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"level\": \"sidd\",\r\n  \"message\": \"success\",\r\n  \"resourceId\": \"server-1234\",\r\n  \"timestamp\": \"2023-09-15T08:00:00Z\",\r\n  \"traceId\": \"abc-xyz-123\",\r\n  \"spanId\": \"span-456\",\r\n  \"commit\": \"5e5342f\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:3000/ingest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"ingest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/logs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"logs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"query\": \"Find all logs with the level set to \\\"error\\\"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

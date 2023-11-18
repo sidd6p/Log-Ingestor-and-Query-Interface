@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Optional
+from typing import List
 from log_ingestor_package import crud, database, rabbitmq_producer, models, config
+from log_ingestor_package.query_processor import parse_query, construct_es_query
 from log_ingestor_package.schemas import LogEntry
 from elasticsearch import Elasticsearch
 
@@ -48,55 +49,27 @@ async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db))
 
     # Save log entry to PostgreSQL
     db_log_entry = crud.create_log(db, log)
-    
-    return {"status": "inserted"}
+
+    return db_log_entry
 
 
 @app.get("/logs", response_model=List[LogEntry])
 async def get_logs(
-    skip: int = 0, limit: int = 100, db: database.SessionLocal = Depends(get_db)
+    skip: int = 0, limit: int = 99999999, db: database.SessionLocal = Depends(get_db)
 ):
     return crud.get_logs(db, skip=skip, limit=limit)
 
 
-@app.get("/search")
-async def search_logs(
-    level: Optional[str] = Query(None),
-    message: Optional[str] = Query(None),
-    resourceId: Optional[str] = Query(None),
-    timestamp: Optional[str] = Query(None),
-    traceId: Optional[str] = Query(None),
-    spanId: Optional[str] = Query(None),
-    commit: Optional[str] = Query(None),
-):
-    query = {
-        "bool": {
-            "must": [],
-            "filter": []
-        }
-    }
+@app.post("/search")
+async def search_logs(request: Request):
+    body = await request.json()
+    query_text = body.get("query")
+    if not query_text:
+        raise HTTPException(status_code=400, detail="Query text is required")
 
-    if level:
-        query["bool"]["filter"].append({"term": {"level": level}})
-    if message:
-        query["bool"]["must"].append({"match": {"message": message}})
-    if resourceId:
-        query["bool"]["filter"].append({"term": {"resourceId": resourceId}})
-    if timestamp:
-        query["bool"]["filter"].append({"range": {"timestamp": {"gte": timestamp}}})
-    if traceId:
-        query["bool"]["filter"].append({"term": {"traceId": traceId}})
-    if spanId:
-        query["bool"]["filter"].append({"term": {"spanId": spanId}})
-    if commit:
-        query["bool"]["filter"].append({"term": {"commit": commit}})
-
-    response = es_client.search(
-        index="log_entries",
-        body={
-            "query": query
-        }
-    )
+    parsed_params = parse_query(query_text)
+    es_query = construct_es_query(parsed_params)
+    response = es_client.search(index="log_entries", body={"query": es_query})
 
     return response["hits"]["hits"]
 
@@ -106,5 +79,3 @@ if __name__ == "__main__":
 
     database.Base.metadata.create_all(bind=database.engine)
     uvicorn.run(app, host="0.0.0.0", port=3000)
-
-
