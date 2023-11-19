@@ -1,9 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from log_ingestor_package import database, rabbitmq_producer, models, config
-from log_ingestor_package.query_processor import parse_query, construct_es_query
-from log_ingestor_package.schemas import LogEntry
+from log_ingestor_package.schemas import LogEntry, SearchCriteria
 from elasticsearch import Elasticsearch
+from typing import Optional
 
 app = FastAPI()
 
@@ -54,14 +54,43 @@ async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db))
 
 
 @app.get("/search")
-async def search_logs(request: Request):
-    body = await request.json()
-    query_text = body.get("query")
-    if not query_text:
-        raise HTTPException(status_code=400, detail="Query text is required")
+def search_logs(
+    criteria: SearchCriteria,
+    db: database.SessionLocal = Depends(get_db),
+):
+    logs_query = db.query(models.LogEntry)
+    
+    if criteria.level:
+        logs_query = logs_query.filter(models.LogEntry.level == criteria.level)
+    if criteria.message:
+        logs_query = logs_query.filter(models.LogEntry.message.contains(criteria.message))
+    if criteria.resource_id:
+        logs_query = logs_query.filter(models.LogEntry.resourceId == criteria.resource_id)
+    if criteria.timestamp:
+        logs_query = logs_query.filter(models.LogEntry.timestamp == criteria.timestamp)
+    if criteria.trace_id:
+        logs_query = logs_query.filter(models.LogEntry.traceId == criteria.trace_id)
+    if criteria.span_id:
+        logs_query = logs_query.filter(models.LogEntry.spanId == criteria.span_id)
+    if criteria.commit:
+        logs_query = logs_query.filter(models.LogEntry.commit == criteria.commit)
 
-    parsed_params = parse_query(query_text)
-    es_query = construct_es_query(parsed_params)
-    response = es_client.search(index="log_entries", body={"query": es_query})
+    if criteria.parent_resource_id:
+            es_query = {
+                "query": {
+                    "nested": {
+                        "path": "meta_data",
+                        "query": {
+                            "match": {
+                                "meta_data.parentResourceId": criteria.parent_resource_id
+                            }
+                        }
+                    }
+                }
+            }
+            es_response = es_client.search(index="log_entries", body=es_query)
+            log_ids = [hit["_id"] for hit in es_response["hits"]["hits"]]
+            logs_query = logs_query.filter(models.LogEntry.id.in_(log_ids))
 
-    return response["hits"]["hits"]
+    logs = logs_query.all()
+    return {"criteria": criteria, "logs": logs}

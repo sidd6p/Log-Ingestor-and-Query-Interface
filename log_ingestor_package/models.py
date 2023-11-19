@@ -15,13 +15,15 @@ class LogEntry(Base):
     meta_data = Column(JSON)  # Renamed from 'metadata'
 
 def create_elasticsearch_index():
-    # Define the Elasticsearch index mapping
     mapping = {
         "mappings": {
             "properties": {
-                "level": {"type": "keyword"},
-                "message": {"type": "text"},
-                "resourceId": {"type": "keyword"},
+                "meta_data": {  # Add mapping for meta_data
+                    "type": "nested",
+                    "properties": {
+                        "parentResourceId": {"type": "keyword"}
+                    }
+                }
                 # ... other fields ...
             }
         }
@@ -29,11 +31,8 @@ def create_elasticsearch_index():
     es_client.indices.create(index="log_entries", body=mapping, ignore=400)
 
 def index_log_entry(log_entry):
-    # Index a log entry in Elasticsearch
     doc = {
-        "level": log_entry.level,
-        "message": log_entry.message,
-        "resourceId": log_entry.resourceId,
+        "meta_data": log_entry.meta_data,  # Ensure meta_data is included
         # ... other fields ...
     }
     es_client.index(index="log_entries", document=doc)
