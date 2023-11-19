@@ -13,11 +13,11 @@
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">10</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1000</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <stringProp name="ThreadGroup.num_threads">500</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <boolProp name="ThreadGroup.delayedStart">false</boolProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.duration">60</stringProp>
@@ -221,7 +221,7 @@
           <stringProp name="RespTimeGraph.interval">1</stringProp>
         </ResultCollector>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="search" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="search" enabled="false">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
@@ -313,13 +313,16 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-    &quot;level&quot;: &quot;error&quot;,&#xd;
-    &quot;message&quot;: &quot;Failed to connect to DB&quot;,&#xd;
+	&quot;level&quot;: &quot;error5&quot;,&#xd;
+	&quot;message&quot;: &quot;Failed to connect to DB&quot;,&#xd;
     &quot;resourceId&quot;: &quot;server-1234&quot;,&#xd;
-    &quot;traceId&quot;: &quot;abc-xyz-123&quot;,&#xd;
+	&quot;timestamp&quot;: &quot;2023-09-15T08:00:00Z&quot;,&#xd;
+	&quot;traceId&quot;: &quot;abc-xyz-123&quot;,&#xd;
     &quot;spanId&quot;: &quot;span-456&quot;,&#xd;
     &quot;commit&quot;: &quot;5e5342f&quot;,&#xd;
-    &quot;timestamp&quot;: &quot;2023-09-15T08:00:00Z&quot;&#xd;
+    &quot;metadata&quot;: {&#xd;
+        &quot;parentResourceId&quot;: &quot;server-0987&quot;&#xd;
+    }&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>

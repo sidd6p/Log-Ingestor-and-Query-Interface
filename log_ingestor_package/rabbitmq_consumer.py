@@ -11,12 +11,13 @@ def callback(ch, method, properties, body):
     db = database.SessionLocal()
     try:
         log_data = json.loads(body)
-        log = LogEntry(**log_data)
+        log = LogEntry(**log_data, metadata=log_data['meta_data'])
         crud.create_log(db, log)
         db.commit()
         ch.basic_ack(
             delivery_tag=method.delivery_tag
         )  # Acknowledge after successful processing
+        print("Log successfully consumed and processed.") 
     except Exception as e:
         print(f"An error occurred: {e}")
         ch.basic_nack(delivery_tag=method.delivery_tag)  # Reject the message on error

@@ -1,11 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List
-from log_ingestor_package import crud, database, rabbitmq_producer, models, config
+from log_ingestor_package import database, rabbitmq_producer, models, config
 from log_ingestor_package.query_processor import parse_query, construct_es_query
 from log_ingestor_package.schemas import LogEntry
 from elasticsearch import Elasticsearch
-
 
 app = FastAPI()
 

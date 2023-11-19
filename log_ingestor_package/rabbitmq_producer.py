@@ -19,6 +19,7 @@ class RabbitMQProducer:
             self.channel.basic_publish(
                 exchange="", routing_key="logs", body=json.dumps(log.dict())
             )
+            print("Log successfully published to RabbitMQ.") 
         except (
             pika.exceptions.ConnectionClosedByBroker,
             pika.exceptions.AMQPConnectionError,
