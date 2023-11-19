@@ -32,6 +32,7 @@ def create_elasticsearch_index():
 
 def index_log_entry(log_entry):
     doc = {
+        "id": log_entry.id,
         "meta_data": log_entry.meta_data,  # Ensure meta_data is included
         # ... other fields ...
     }

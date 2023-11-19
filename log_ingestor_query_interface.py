@@ -32,11 +32,11 @@ if ingest_button:
 
 # Section for Searching Logs
 st.header("Search Logs")
-query = st.text_input("Enter your search query", key="query_search")
+query = str(st.text_input("Enter your search query", key="query_search"))
 search_button = st.button("Search")
 
 if search_button and query:
-    response = requests.post(f"{FASTAPI_BACKEND_URL}/search", json={"query": query})
+    response = requests.get(f"{FASTAPI_BACKEND_URL}/search", json={"query": str(query)})
 
     if response.status_code == 200:
         results = response.json()

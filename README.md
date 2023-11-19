@@ -6,7 +6,7 @@
 To run the application, execute the 
 `python -m log_ingestor_package.rabbitmq_consumer`
 `uvicorn log_ingestor_query_backend:app --host 0.0.0.0 --port 3000 --workers 4 --reload`.
-
+`streamlit run log_ingestor_query_interface.py`
 ### Explanation
 - **`database.py`**: Manages database connection and session.
 - **`models.py`**: Defines the database models (tables).
