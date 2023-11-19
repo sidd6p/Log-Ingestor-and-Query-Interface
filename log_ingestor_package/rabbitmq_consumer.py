@@ -4,6 +4,8 @@ import json
 from log_ingestor_package import crud, database
 from log_ingestor_package.schemas import LogEntry
 
+from log_ingestor_package import config
+
 
 def callback(ch, method, properties, body):
     db = database.SessionLocal()
@@ -23,7 +25,7 @@ def callback(ch, method, properties, body):
 
 
 # RabbitMQ setup and consumption
-connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+connection = pika.BlockingConnection(pika.ConnectionParameters(config.settings.RABBITMQ_URL))
 channel = connection.channel()
 channel.queue_declare(queue="logs")
 channel.basic_consume(queue="logs", on_message_callback=callback, auto_ack=False)

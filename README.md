@@ -3,7 +3,9 @@
 
 
 ### Running the Application
-To run the application, execute the `log_ingestor.py` file as before. Ensure that all the files are in the same directory or properly referenced if placed in different packages.
+To run the application, execute the 
+`python -m log_ingestor_package.rabbitmq_consumer`
+`uvicorn log_ingestor_query_backend:app --host 0.0.0.0 --port 3000 --workers 4 --reload`.
 
 ### Explanation
 - **`database.py`**: Manages database connection and session.

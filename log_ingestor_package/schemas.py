@@ -1,7 +1,6 @@
 # schemas.py
-from pydantic import BaseModel
-from typing import Dict
-
+from pydantic import BaseModel, Field
+from typing import Dict, Optional
 
 class LogEntryBase(BaseModel):
     level: str
@@ -10,11 +9,11 @@ class LogEntryBase(BaseModel):
     traceId: str
     spanId: str
     commit: str
-    # log_metadata: Dict
-
+    meta_data: Optional[Dict] = Field(default=None, alias='metadata')  # Corrected to handle optional metadata
 
 class LogEntry(LogEntryBase):
     timestamp: str
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True  # Allow population by both field name and alias

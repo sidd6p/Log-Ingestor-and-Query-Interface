@@ -52,14 +52,7 @@ async def ingest_log(log: LogEntry, db: database.SessionLocal = Depends(get_db))
     # Save log entry to PostgreSQL
     # db_log_entry = crud.create_log(db, log)
 
-    return {"status":"Log inserted successfully"}
-
-
-@app.get("/logs", response_model=List[LogEntry])
-async def get_logs(
-    skip: int = 0, limit: int = 99999999, db: database.SessionLocal = Depends(get_db)
-):
-    return crud.get_logs(db, skip=skip, limit=limit)
+    return log
 
 
 @app.get("/search")

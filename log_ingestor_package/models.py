@@ -2,7 +2,6 @@
 from sqlalchemy import Column, Integer, String, JSON
 from log_ingestor_package.database import Base, es_client
 
-
 class LogEntry(Base):
     __tablename__ = "logs"
     id = Column(Integer, primary_key=True, index=True)
@@ -13,8 +12,7 @@ class LogEntry(Base):
     traceId = Column(String)
     spanId = Column(String)
     commit = Column(String)
-    # log_metadata = Column(JSON)  # Renamed from 'metadata' to 'log_metadata'
-
+    meta_data = Column(JSON)  # Renamed from 'metadata'
 
 def create_elasticsearch_index():
     # Define the Elasticsearch index mapping
@@ -29,7 +27,6 @@ def create_elasticsearch_index():
         }
     }
     es_client.indices.create(index="log_entries", body=mapping, ignore=400)
-
 
 def index_log_entry(log_entry):
     # Index a log entry in Elasticsearch

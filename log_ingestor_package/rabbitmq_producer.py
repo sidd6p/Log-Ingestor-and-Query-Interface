@@ -2,11 +2,14 @@
 import pika
 import json
 
+from log_ingestor_package import config
+
+
 
 class RabbitMQProducer:
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters("localhost")
+            pika.ConnectionParameters(config.settings.RABBITMQ_URL)
         )
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue="logs")
@@ -28,7 +31,7 @@ class RabbitMQProducer:
     def reconnect(self):
         self.connection.close()
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters("localhost")
+            pika.ConnectionParameters(config.settings.RABBITMQ_URL)
         )
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue="logs")
