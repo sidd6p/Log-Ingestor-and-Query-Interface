@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, JSON
 from log_ingestor_package.database import Base, es_client
 
+
 class LogEntry(Base):
     __tablename__ = "logs_tb"
     id = Column(Integer, primary_key=True, index=True)
@@ -14,21 +15,21 @@ class LogEntry(Base):
     commit = Column(String)
     meta_data = Column(JSON)  # Renamed from 'metadata'
 
+
 def create_elasticsearch_index():
     mapping = {
         "mappings": {
             "properties": {
                 "meta_data": {  # Add mapping for meta_data
                     "type": "nested",
-                    "properties": {
-                        "parentResourceId": {"type": "keyword"}
-                    }
+                    "properties": {"parentResourceId": {"type": "keyword"}},
                 }
                 # ... other fields ...
             }
         }
     }
     es_client.indices.create(index="log_entries", body=mapping, ignore=400)
+
 
 def index_log_entry(log_entry):
     doc = {

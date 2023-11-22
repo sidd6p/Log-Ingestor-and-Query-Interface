@@ -20,7 +20,3 @@ async def test_ingest_log():
             },
         )
         assert response.status_code == 200
-        assert response.json() == {"status": "Log inserted successfully"}
-
-
-

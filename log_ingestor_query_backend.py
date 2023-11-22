@@ -1,6 +1,12 @@
 from fastapi import FastAPI, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
-from log_ingestor_package import database, rabbitmq_producer, models, config, query_reader
+from log_ingestor_package import (
+    database,
+    rabbitmq_producer,
+    models,
+    config,
+    query_reader,
+)
 from log_ingestor_package.schemas import LogEntry, SearchCriteria
 from elasticsearch import Elasticsearch
 from typing import Optional
@@ -61,7 +67,7 @@ def search_logs(
     # return str(criteria.query)
     matches = query_reader.get_keys_values(criteria.query)
     logs_query = db.query(models.LogEntry)
-    for key, value in matches:        
+    for key, value in matches:
         if key == "level":
             logs_query = logs_query.filter(models.LogEntry.level == value)
         if key == "message":
@@ -78,24 +84,18 @@ def search_logs(
             logs_query = logs_query.filter(models.LogEntry.commit == value)
 
         if key == "metadata.parentResourceId":
-                es_query = {
-                    "query": {
-                        "nested": {
-                            "path": "meta_data",
-                            "query": {
-                                "match": {
-                                    "meta_data.parentResourceId": value
-                                }
-                            }
-                        }
+            es_query = {
+                "query": {
+                    "nested": {
+                        "path": "meta_data",
+                        "query": {"match": {"meta_data.parentResourceId": value}},
                     }
-                }
-                es_response = es_client.search(index="log_entries", body=es_query)
-                print(es_response["hits"]["hits"])
-                log_ids = [hit["_source"]["id"] for hit in es_response["hits"]["hits"]]
-                logs_query = logs_query.filter(models.LogEntry.id.in_(log_ids))
+                },
+                "size": 10000,
+            }
+            es_response = es_client.search(index="log_entries", body=es_query)
+            log_ids = [hit["_source"]["id"] for hit in es_response["hits"]["hits"]]
+            logs_query = logs_query.filter(models.LogEntry.id.in_(log_ids))
 
     logs = logs_query.all()
-    print("##################################################")
-
     return logs

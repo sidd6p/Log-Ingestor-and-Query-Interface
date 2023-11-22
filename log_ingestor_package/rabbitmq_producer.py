@@ -5,7 +5,6 @@ import json
 from log_ingestor_package import config
 
 
-
 class RabbitMQProducer:
     def __init__(self):
         self.connection = pika.BlockingConnection(
@@ -19,7 +18,7 @@ class RabbitMQProducer:
             self.channel.basic_publish(
                 exchange="", routing_key="logs", body=json.dumps(log.dict())
             )
-            print("Log successfully published to RabbitMQ.") 
+            print("Log successfully published to RabbitMQ.")
         except (
             pika.exceptions.ConnectionClosedByBroker,
             pika.exceptions.AMQPConnectionError,

@@ -3,6 +3,7 @@ import json
 from sqlalchemy.orm import Session
 from log_ingestor_package import models, schemas
 
+
 def create_log(db: Session, log: schemas.LogEntry):
     # Create and add log entry to PostgreSQL
     db_log = models.LogEntry(
@@ -22,6 +23,7 @@ def create_log(db: Session, log: schemas.LogEntry):
     models.index_log_entry(db_log)
 
     return db_log
+
 
 def get_logs(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.LogEntry).offset(skip).limit(limit).all()

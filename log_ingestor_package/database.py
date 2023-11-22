@@ -7,9 +7,9 @@ from log_ingestor_package import config
 
 # SQLAlchemy Database Engine for PostgreSQL
 engine = create_engine(
-    config.settings.DATABASE_URL,  
+    config.settings.DATABASE_URL,
     pool_size=20,  # Increase pool size
-    max_overflow=40  # Increase max overflow
+    max_overflow=40,  # Increase max overflow
 )
 
 # SQLAlchemy Session Factory

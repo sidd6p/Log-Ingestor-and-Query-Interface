@@ -24,7 +24,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"level\": \"sidd\",\r\n  \"message\": \"success\",\r\n  \"resourceId\": \"server-1234\",\r\n  \"timestamp\": \"2023-09-15T08:00:00Z\",\r\n  \"traceId\": \"abc-xyz-123\",\r\n  \"spanId\": \"span-456\",\r\n  \"commit\": \"5e5342f\"\r\n}\r\n"
+					"raw": "{\r\n\t\"level\": \"1\",\r\n\t\"message\": \"Failed 110\",\r\n    \"resourceId\": \"server-1234\",\r\n\t\"timestamp\": \"2023-09-15T08:00:00Z\",\r\n\t\"traceId\": \"abc-xyz-123\",\r\n    \"spanId\": \"span-456\",\r\n    \"commit\": \"5e5342f\",\r\n    \"metadata\": {\r\n        \"parentResourceId\": \"server-1\"\r\n    }\r\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3000/ingest",
@@ -35,25 +35,6 @@
 					"port": "3000",
 					"path": [
 						"ingest"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "logs",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/logs",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"logs"
 					]
 				}
 			},
@@ -80,12 +61,15 @@
 		},
 		{
 			"name": "search",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"query\": \"Find all logs with the level set to \\\"error\\\"\"\r\n}",
+					"raw": "{\r\n    \"query\": \"Find all logs with the level set to \\\"error\\\"\"\r\n\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
